@@ -1,0 +1,73 @@
+PASSO A PASSO PARA EXECUTAR O MONITOR DE TRÁFEGO DE REDE EM TEMPO REAL
+============================================================
+
+1. PREPARAÇÃO DO AMBIENTE
+--------------------------
+- Utilize um ambiente Linux (máquina física, VM ou container).
+- Certifique-se de ter Python 3 instalado:
+    python3 --version
+- Baixe ou clone o projeto para o seu diretório de trabalho:
+    git clone https://github.com/bengo501/Tf_LabRedes.git
+    cd Tf_LabRedes
+
+2. CONFIGURAÇÃO DA REDE E DO TÚNEL
+-----------------------------------
+- Compile e execute o programa de túnel conforme o enunciado.
+  No servidor proxy:
+    sudo ./traffic_tunnel <if do servidor> -s <ip do servidor>
+  No cliente:
+    sudo ./traffic_tunnel <if do cliente> -c <ip do cliente> -t
+- Verifique se a interface tun0 foi criada:
+    ip addr
+  ou
+    ifconfig
+  Procure por uma interface chamada tun0.
+
+3. EXECUTANDO O MONITOR
+------------------------
+- Entre na pasta do projeto (se ainda não estiver nela):
+    cd Tf_LabRedes
+- (Opcional) Verifique se a pasta logs/ existe. Ela será criada automaticamente pelo script.
+- Execute o monitor como root (necessário para raw sockets):
+    sudo python3 monitor.py
+- O monitor começará a capturar pacotes da interface tun0 e exibirá contadores de pacotes por protocolo na tela.
+
+4. VISUALIZANDO OS LOGS
+------------------------
+- Os arquivos de log são salvos na pasta logs/:
+    logs/camada2.csv  (camada de enlace)
+    logs/camada3.csv  (camada de rede)
+    logs/camada4.csv  (camada de transporte)
+- Para visualizar o conteúdo dos logs em tempo real, use:
+    cat logs/camada2.csv
+    cat logs/camada3.csv
+    cat logs/camada4.csv
+
+5. ENCERRANDO O MONITOR
+------------------------
+- Para parar o monitor, pressione Ctrl+C no terminal onde ele está rodando.
+- Os arquivos de log permanecerão salvos para análise posterior.
+
+6. DICAS PARA APRESENTAÇÃO E RELATÓRIO
+---------------------------------------
+- Tire screenshots da interface do monitor rodando e dos arquivos de log sendo visualizados.
+- Inclua no relatório:
+    - Descrição do funcionamento do monitor.
+    - Análise dos tipos de pacotes capturados.
+    - Exemplos dos logs gerados.
+    - Prints da interface e dos arquivos CSV.
+- Explique que o monitor faz parsing detalhado de IPv4, TCP, UDP e ICMP, mas pode ser expandido para outros protocolos.
+
+7. POSSÍVEIS PROBLEMAS E SOLUÇÕES
+----------------------------------
+- Permissão negada ao abrir socket: execute sempre com sudo.
+- Interface tun0 não existe: certifique-se de que o túnel está rodando corretamente.
+- Logs não aparecem: verifique se o diretório logs/ existe e se o script tem permissão de escrita.
+
+RESUMO DOS COMANDOS PRINCIPAIS
+------------------------------
+cd Tf_LabRedes
+sudo python3 monitor.py
+cat logs/camada2.csv
+cat logs/camada3.csv
+cat logs/camada4.csv 

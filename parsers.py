@@ -2,6 +2,10 @@ import struct
 import socket
 
 def parse_ethernet(pkt):
+    """
+    Faz o parsing do cabeçalho Ethernet (camada 2).
+    Retorna um dicionário com MAC de origem, destino, EtherType e tamanho do quadro.
+    """
     if len(pkt) < 14:
         return None
     dst_mac, src_mac, ethertype = struct.unpack('!6s6sH', pkt[:14])
@@ -13,6 +17,10 @@ def parse_ethernet(pkt):
     }
 
 def parse_ip(pkt):
+    """
+    Faz o parsing do cabeçalho IP (camada 3).
+    Retorna um dicionário com versão, IHL, IP de origem, destino, protocolo e tamanho.
+    """
     if len(pkt) < 20:
         return None
     version_ihl = pkt[0]
@@ -32,6 +40,10 @@ def parse_ip(pkt):
     }
 
 def parse_transport(pkt, proto):
+    """
+    Faz o parsing do cabeçalho de transporte (camada 4) para TCP, UDP e ICMP.
+    Retorna um dicionário com portas e tamanho, se aplicável.
+    """
     if proto == 6 and len(pkt) >= 20:  # TCP
         src_port, dst_port = struct.unpack('!HH', pkt[:4])
         return {'src_port': src_port, 'dst_port': dst_port, 'size': len(pkt)}
@@ -39,6 +51,7 @@ def parse_transport(pkt, proto):
         src_port, dst_port, length = struct.unpack('!HHH', pkt[:6])
         return {'src_port': src_port, 'dst_port': dst_port, 'size': length}
     elif proto == 1 and len(pkt) >= 4:  # ICMP
+        # ICMP não possui portas, apenas tipo/código
         return {'src_port': '', 'dst_port': '', 'size': len(pkt)}
     else:
         return None 
