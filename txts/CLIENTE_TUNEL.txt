@@ -1,0 +1,26 @@
+SOBRE O CLIENTE DO TÚNEL
+========================
+
+O cliente do túnel é responsável por encapsular o tráfego de rede de um host e enviá-lo para o servidor proxy, onde será desencapsulado e roteado para a rede externa. No contexto deste trabalho, o cliente do túnel simula o papel de um usuário ou máquina cliente que acessa a internet por meio do servidor proxy, utilizando uma interface virtual (tun0).
+
+Para fins de teste e demonstração do monitor de tráfego, é possível executar o cliente do túnel em outro terminal ou processo na mesma máquina onde está rodando o servidor do túnel. Essa abordagem é funcionalmente equivalente a utilizar outro computador, VM ou container, pois:
+
+- O cliente do túnel cria uma interface virtual tun0 separada, encapsula o tráfego e o envia para o servidor do túnel.
+- O tráfego é processado, desencapsulado e injetado na tun0 do servidor, exatamente como ocorreria em um ambiente distribuído.
+- O monitor de tráfego no servidor captura e analisa os pacotes que chegam na tun0, independentemente de o cliente estar em outro host ou na mesma máquina.
+
+Dessa forma, é possível validar e demonstrar o funcionamento do monitor de tráfego sem a necessidade de múltiplos dispositivos físicos ou virtuais, mantendo a fidelidade do cenário proposto no enunciado.
+
+**Exemplo de execução do cliente do túnel em outro terminal:**
+
+    cd ~/Projetos/Tf_LabRedes/traffic_tunnel
+    sudo ./traffic_tunnel wlp0s20f3 -c 192.168.0.15 -t
+
+Ou, se houver um script de cliente disponível:
+
+    sudo ./client1.sh
+
+Após iniciar o cliente, qualquer tráfego gerado na interface tun0 do cliente será encaminhado para o servidor, podendo ser monitorado e registrado pelo sistema desenvolvido.
+
+**Observação:**
+Para fins de avaliação e apresentação, essa abordagem é aceita e recomendada em ambientes de laboratório, pois garante que o tráfego percorra todo o caminho do túnel, sendo capturado corretamente pelo monitor. 
