@@ -1,0 +1,39 @@
+OBSERVAÇÕES SOBRE O MONITOR DE TRÁFEGO DE REDE EM TEMPO REAL
+============================================================
+
+1. SOBRE O PARSING DIRETO NA CAMADA 3 (IP)
+-------------------------------------------
+- A interface tun0 é uma interface do tipo TUN, que entrega pacotes a partir da camada 3 (IP), sem cabeçalho Ethernet.
+- Por isso, ao capturar pacotes na tun0, o monitor deve iniciar o parsing diretamente pelo cabeçalho IP.
+- Isso garante que as informações extraídas (endereços IP, protocolo, tamanho, etc.) estejam corretas e condizentes com o tráfego real da interface.
+
+2. POR QUE NÃO LOGAR CAMADA 2 (ETHERNET) NA tun0
+--------------------------------------------------
+- O cabeçalho Ethernet (camada 2) não está presente nos pacotes recebidos pela tun0.
+- Tentar interpretar os primeiros bytes do pacote como um cabeçalho Ethernet resultaria em dados inválidos (ex: EtherType 0x0000).
+- Portanto, o log de camada 2 (camada2.csv) não faz sentido para tun0 e foi removido do monitor.
+
+3. LOGS DE CAMADA 3 E 4
+------------------------
+- O monitor mantém logs detalhados para as camadas 3 (IP) e 4 (TCP/UDP/ICMP), conforme o enunciado.
+- Os arquivos camada3.csv e camada4.csv são atualizados em tempo real e podem ser visualizados a qualquer momento.
+
+4. CONTADORES E INTERFACE DE TEXTO
+-----------------------------------
+- A interface de texto exibe contadores para cada tipo de protocolo identificado (IPv4, TCP, UDP, ICMP, etc.).
+- Isso permite acompanhar o tráfego em tempo real de forma simples e eficiente.
+
+5. JUSTIFICATIVA TÉCNICA
+-------------------------
+- A decisão de iniciar o parsing na camada 3 e não logar camada 2 está alinhada com o funcionamento das interfaces TUN e com as boas práticas de análise de tráfego em ambientes virtuais.
+- O monitor continua atendendo a todos os requisitos do enunciado, fornecendo estatísticas e logs úteis para análise do tráfego de rede.
+
+6. POSSÍVEIS EXPANSÕES
+-----------------------
+- Caso o monitor seja utilizado em uma interface TAP (que entrega quadros Ethernet), o parsing e logging de camada 2 pode ser reativado.
+- O código pode ser adaptado para detectar automaticamente o tipo de interface e ajustar o parsing conforme necessário.
+
+7. REFERÊNCIAS
+--------------
+- Documentação oficial do Linux TUN/TAP: https://www.kernel.org/doc/Documentation/networking/tuntap.txt
+- Enunciado do trabalho de Laboratório de Redes de Computadores 
