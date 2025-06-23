@@ -1,0 +1,127 @@
+PASSO A PASSO PARA EXECUTAR O MONITOR DE TRÁFEGO DE REDE EM TEMPO REAL
+============================================================
+
+Este guia utiliza como exemplo:
+- Interface física: wlp0s20f3
+- IP da interface física: 192.168.0.15
+- IP da tun0 (servidor): 172.31.66.1
+
+1. COMPILAR O TÚNEL (se necessário)
+-----------------------------------
+Abra um terminal e execute:
+    cd ~/Projetos/Tf_LabRedes/traffic_tunnel
+    make
+
+2. RODAR O SERVIDOR DO TÚNEL
+----------------------------
+No mesmo terminal:
+    cd ~/Projetos/Tf_LabRedes/traffic_tunnel
+    sudo ./traffic_tunnel wlp0s20f3 -s 192.168.0.15
+
+Deixe esse terminal aberto!
+
+3. VERIFICAR SE A INTERFACE tun0 FOI CRIADA
+-------------------------------------------
+Abra outro terminal e execute:
+    ip addr
+
+    ou
+
+    ifconfig
+Procure por uma interface chamada tun0 com IP, por exemplo, 172.31.66.1.
+
+4. RODAR O MONITOR DE TRÁFEGO
+-----------------------------
+Abra um novo terminal:
+    cd ~/Projetos/Tf_LabRedes
+    sudo python3 monitor.py
+O monitor mostrará os contadores de pacotes na tela.
+
+5. RODAR O CLIENTE DO TÚNEL (em outro terminal)
+-----------------------------------------------
+Abra mais um terminal:
+    cd ~/Projetos/Tf_LabRedes/traffic_tunnel
+    sudo ./traffic_tunnel wlp0s20f3 -c 192.168.0.15 -t
+Ou, se existir, rode:
+    sudo ./client1.sh
+
+    {
+       ou rode:
+    cd ~/Projetos/Tf_LabRedes/traffic_tunnel
+    bernardo@bengo:~/Projetos/Tf_LabRedes/traffic_tunnel$ sudo ./client1.sh
+    
+    e depois faça um ping
+    bernardo@bengo:~/Projetos/Tf_LabRedes/traffic_tunnel$ ping 172.31.66.1
+    }
+
+6. GERAR TRÁFEGO PELO TÚNEL
+---------------------------
+No terminal do cliente, ou em outro terminal, execute:
+    ping 172.31.66.1
+Esse é o IP da tun0 do servidor.
+
+Você pode também tentar:
+    curl http://example.com --interface tun0
+ou qualquer outro comando que gere tráfego pela interface tun0.
+
+7. VER OS LOGS SENDO PREENCHIDOS
+--------------------------------
+No terminal do monitor, os contadores devem subir.
+Para ver os logs:
+    cat logs/camada3.csv
+    cat logs/camada4.csv
+Ou, para acompanhar em tempo real:
+    tail -f logs/camada3.csv
+
+8. TIRAR SCREENSHOTS PARA O RELATÓRIO
+-------------------------------------
+- Terminal do túnel rodando.
+- Comando ip addr mostrando a tun0.
+- Monitor rodando com contadores subindo.
+- Logs camada3.csv e camada4.csv sendo preenchidos.
+- (Opcional) Comando de ping ou curl gerando tráfego.
+
+9. PARA ENCERRAR
+----------------
+Use Ctrl+C para parar o monitor, o cliente e o servidor do túnel.
+
+RESUMO DOS COMANDOS
+-------------------
+cd ~/Projetos/Tf_LabRedes/traffic_tunnel
+make
+sudo ./traffic_tunnel wlp0s20f3 -s 192.168.0.15
+ip addr
+cd ~/Projetos/Tf_LabRedes
+sudo python3 monitor.py
+cd ~/Projetos/Tf_LabRedes/traffic_tunnel
+sudo ./traffic_tunnel wlp0s20f3 -c 192.168.0.15 -t
+ping 172.31.66.1
+cat logs/camada3.csv
+cat logs/camada4.csv
+tail -f logs/camada3.csv
+
+Se algum comando der erro, envie a mensagem para análise e suporte!
+
+6. DICAS PARA APRESENTAÇÃO E RELATÓRIO
+---------------------------------------
+- Tire screenshots da interface do monitor rodando e dos arquivos de log sendo visualizados.
+- Inclua no relatório:
+    - Descrição do funcionamento do monitor.
+    - Análise dos tipos de pacotes capturados.
+    - Exemplos dos logs gerados.
+    - Prints da interface e dos arquivos CSV.
+- Explique que o monitor faz parsing detalhado de IPv4, TCP, UDP e ICMP, mas pode ser expandido para outros protocolos.
+
+7. POSSÍVEIS PROBLEMAS E SOLUÇÕES
+----------------------------------
+- Permissão negada ao abrir socket: execute sempre com sudo.
+- Interface tun0 não existe: certifique-se de que o túnel está rodando corretamente.
+- Logs não aparecem: verifique se o diretório logs/ existe e se o script tem permissão de escrita.
+
+RESUMO DOS COMANDOS PRINCIPAIS
+------------------------------
+cd Tf_LabRedes
+sudo python3 monitor.py
+cat logs/camada2.csv
+cat logs/camada3.csv
+cat logs/camada4.csv 

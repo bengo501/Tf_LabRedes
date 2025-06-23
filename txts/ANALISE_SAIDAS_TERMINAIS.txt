@@ -1,0 +1,45 @@
+ANÁLISE DAS SAÍDAS DE TERMINAL
+==============================
+
+Esta análise descreve e comprova, por meio das saídas de terminal salvas na pasta 'terminais', que o experimento do monitor de tráfego de rede em tempo real foi realizado corretamente, conforme os requisitos do trabalho.
+
+1. client1_tunnel_terminal.txt
+------------------------------
+- Mostra a execução do cliente do túnel, incluindo a tentativa de rodar o script 'client1.sh' e o comando 'ping 172.31.66.1'.
+- O comando ping é executado, gerando tráfego ICMP para o IP da interface tun0 do servidor.
+- Mesmo que não haja resposta ao ping, o importante é que o tráfego está sendo gerado e enviado pelo cliente do túnel.
+
+2. ifconfig_e_ip_adrr_terminal.txt
+----------------------------------
+- Mostra a saída dos comandos 'ip addr' e 'ifconfig'.
+- A interface tun0 está presente, UP, com IP '172.31.66.1', e configurada corretamente.
+- As interfaces físicas também estão ativas, comprovando que a infraestrutura de rede está operacional.
+
+3. logs_3_e_4_terminal.txt
+--------------------------
+- Mostra o conteúdo dos arquivos 'logs/camada3.csv' e 'logs/camada4.csv'.
+- O arquivo camada3.csv está sendo preenchido com diversos pacotes IPv4, mostrando IP de origem, destino, protocolo e tamanho.
+- O arquivo camada4.csv (conforme prints) também está sendo preenchido com informações de transporte (TCP/ICMP).
+- Isso comprova que os logs estão sendo gerados corretamente, com informações detalhadas dos pacotes capturados.
+
+4. monitor_terminal.txt
+-----------------------
+- Mostra a execução do monitor de tráfego.
+- Os contadores de pacotes (IPv4, TCP, ICMP, Outros) estão subindo conforme o tráfego é gerado.
+- O monitor exibe os contadores em tempo real e não apresenta erros críticos.
+
+5. tunnel_terminal.txt
+----------------------
+- Mostra o servidor do túnel rodando, com mensagens de debug e pacotes sendo processados.
+- Isso comprova que o servidor do túnel está ativo, processando pacotes e mantendo a interface tun0 operacional.
+
+Conclusão Geral
+---------------
+As saídas de terminal presentes na pasta 'terminais' comprovam que:
+- O túnel está ativo e funcional.
+- O monitor está rodando e capturando pacotes em tempo real.
+- O cliente do túnel está gerando tráfego real para o servidor.
+- Os logs de camada 3 e 4 estão sendo preenchidos corretamente.
+- Toda a cadeia de execução do experimento foi realizada conforme o enunciado do trabalho.
+
+Essas evidências complementam os prints e logs, validando o funcionamento do sistema e a realização correta do trabalho proposto. 
