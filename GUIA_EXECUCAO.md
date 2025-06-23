@@ -120,3 +120,4 @@ Se perguntado, você pode provar que a funcionalidade da Camada 2 foi implementa
 sudo python3 monitor.py wlp0s20f3
 ```
 Neste modo, o `camada2.csv` será preenchido, provando que o código está 100% completo.
+ 

@@ -39,9 +39,10 @@ echo ""
 echo "Este script ajuda a testar o projeto conforme o enunciado."
 echo "Por favor, escolha uma opção:"
 echo "  1) Executar o cenário oficial do trabalho (monitorar tun0)"
-echo "  2) Teste completo em máquina única (ver guia)"
-echo "  3) Demonstrar a captura de Camada 2 (monitorar interface física)"
-echo "  4) Sair"
+echo "  2) Testar criação da interface tun0 (novo)"
+echo "  3) Teste completo em máquina única (ver guia)"
+echo "  4) Demonstrar a captura de Camada 2 (monitorar interface física)"
+echo "  5) Sair"
 echo ""
 # Lê a escolha do usuário. Se nada for digitado, o padrão é '1'.
 read -p "Sua escolha [1]: " ESCOLHA
@@ -64,6 +65,8 @@ if [ "$ESCOLHA" -eq 1 ]; then
         echo "   Por favor, certifique-se de que o servidor do túnel está"
         echo "   rodando em outro terminal antes de executar este script."
         echo "   Comando: cd traffic_tunnel && sudo ./traffic_tunnel <if> -s <ip>"
+        echo ""
+        echo "   Ou execute a opção 2 para testar a criação da tun0 automaticamente."
         exit 1
     fi
     
@@ -77,7 +80,18 @@ if [ "$ESCOLHA" -eq 1 ]; then
     echo ""
 
 elif [ "$ESCOLHA" -eq 2 ]; then
-    # OPÇÃO 2: Fornece as instruções para o teste manual completo.
+    # OPÇÃO 2: Testar criação da interface tun0.
+    echo ""
+    echo "--- Testando Criação da Interface TUN0 ---"
+    echo "Este teste irá criar automaticamente o túnel cliente-servidor"
+    echo "e verificar se a interface tun0 é criada corretamente."
+    echo ""
+    read -p "Pressione Enter para executar o teste da tun0..."
+    ./teste_tun0.sh
+    exit 0
+
+elif [ "$ESCOLHA" -eq 3 ]; then
+    # OPÇÃO 3: Fornece as instruções para o teste manual completo.
     # Útil para guiar o usuário na simulação de cliente/servidor.
     echo ""
     echo "--- Guia para Teste Completo em Máquina Única ---"
@@ -90,8 +104,8 @@ elif [ "$ESCOLHA" -eq 2 ]; then
     read
     exit 0
 
-elif [ "$ESCOLHA" -eq 3 ]; then
-    # OPÇÃO 3: Cenário para demonstrar a funcionalidade de captura da Camada 2.
+elif [ "$ESCOLHA" -eq 4 ]; then
+    # OPÇÃO 4: Cenário para demonstrar a funcionalidade de captura da Camada 2.
     # Prova que o código é capaz de lidar com logs de camada 2, embora não
     # seja o foco principal do trabalho.
     echo ""
@@ -110,14 +124,14 @@ elif [ "$ESCOLHA" -eq 3 ]; then
     echo ""
 
 else
-    # OPÇÃO 4: Sair do script.
+    # OPÇÃO 5: Sair do script.
     echo "Saindo."
     exit 0
 fi
 
 # --- Bloco de Execução ---
-# Apenas as opções 1 e 3 (que de fato iniciam o monitor) entram neste bloco.
-if [ "$ESCOLHA" -eq 1 ] || [ "$ESCOLHA" -eq 3 ]; then
+# Apenas as opções 1 e 4 (que de fato iniciam o monitor) entram neste bloco.
+if [ "$ESCOLHA" -eq 1 ] || [ "$ESCOLHA" -eq 4 ]; then
     echo "Iniciando monitor de tráfego na interface: $INTERFACE"
     echo ""
     echo "Em outro terminal, gere tráfego:"

@@ -198,3 +198,4 @@ rm -f logs/camada*.csv
 5. **Explique** que está simulando a arquitetura completa em uma máquina
 
 **Sucesso!** 🎉 Você está testando exatamente o cenário descrito no enunciado.
+ 

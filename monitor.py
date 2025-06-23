@@ -203,38 +203,38 @@ def main():
                 
         elif interface_type == 'tun':
             # Interface TUN: começa diretamente com cabeçalho IP
-            ip = parse_ip(pkt)
-            if ip is None:
-                counters['Outros'] += 1
-                continue
+        ip = parse_ip(pkt)
+        if ip is None:
+            counters['Outros'] += 1
+            continue
                 
-            counters['IPv4'] += 1
-            # Loga informações da camada 3 (IP)
-            with open(CAMADA3_CSV, 'a', newline='') as f:
-                writer = csv.writer(f)
-                writer.writerow([now, ip['version'], ip['src_ip'], ip['dst_ip'], ip['protocol'], ip['size']])
+        counters['IPv4'] += 1
+        # Loga informações da camada 3 (IP)
+        with open(CAMADA3_CSV, 'a', newline='') as f:
+            writer = csv.writer(f)
+            writer.writerow([now, ip['version'], ip['src_ip'], ip['dst_ip'], ip['protocol'], ip['size']])
             
-            # Se for TCP, UDP ou ICMP, faz parsing da camada 4
-            if ip['protocol'] in PROTOCOLS:
-                trans = parse_transport(pkt[ip['ihl']*4:], ip['protocol'])
-                if trans:
-                    counters[PROTOCOLS[ip['protocol']]] += 1
-                    # Loga informações da camada 4 (transporte)
-                    with open(CAMADA4_CSV, 'a', newline='') as f:
-                        writer = csv.writer(f)
-                        writer.writerow([
-                            now,
-                            PROTOCOLS[ip['protocol']],
-                            ip['src_ip'],
-                            trans['src_port'],
-                            ip['dst_ip'],
-                            trans['dst_port'],
-                            trans['size']
-                        ])
-                else:
-                    counters['Outros'] += 1
+        # Se for TCP, UDP ou ICMP, faz parsing da camada 4
+        if ip['protocol'] in PROTOCOLS:
+            trans = parse_transport(pkt[ip['ihl']*4:], ip['protocol'])
+            if trans:
+                counters[PROTOCOLS[ip['protocol']]] += 1
+                # Loga informações da camada 4 (transporte)
+                with open(CAMADA4_CSV, 'a', newline='') as f:
+                    writer = csv.writer(f)
+                    writer.writerow([
+                        now,
+                        PROTOCOLS[ip['protocol']],
+                        ip['src_ip'],
+                        trans['src_port'],
+                        ip['dst_ip'],
+                        trans['dst_port'],
+                        trans['size']
+                    ])
             else:
                 counters['Outros'] += 1
+        else:
+            counters['Outros'] += 1
         
         # Atualiza a interface de texto a cada segundo
         if time.time() - last_print > 1:

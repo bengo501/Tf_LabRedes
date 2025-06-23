@@ -12,9 +12,9 @@ Este projeto implementa um monitor de tráfego de rede em tempo real usando raw 
 ## Como usar
 
 ### 1. Execução Básica
-```bash
+   ```bash
 # Monitorar interface padrão (tun0)
-sudo python3 monitor.py
+   sudo python3 monitor.py
 
 # Monitorar interface específica
 sudo python3 monitor.py eth0
