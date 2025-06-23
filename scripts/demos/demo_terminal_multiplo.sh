@@ -38,12 +38,12 @@ if ! command -v gnome-terminal &> /dev/null; then
 fi
 
 # Verifica se o executável do túnel existe
-if [ ! -f "../../traffic_tunnel/traffic_tunnel" ]; then
+if [ ! -f "traffic_tunnel/traffic_tunnel" ]; then
     echo "Compilando o túnel..."
-    cd ../../traffic_tunnel
+    cd traffic_tunnel
     make clean
     make
-    cd ../../scripts/demos
+    cd ..
 fi
 
 echo "Este script irá abrir 4 terminais separados seguindo os comandos manuais:"
@@ -77,7 +77,7 @@ trap cleanup SIGINT
 echo "Passo 1: Configurando dispositivo TUN..."
 if [ ! -e "/dev/tun" ]; then
     echo "Dispositivo TUN não encontrado. Configurando..."
-    ./../../scripts/setups/setup_tun.sh
+    ./scripts/setups/setup_tun.sh
 else
     echo "✓ Dispositivo TUN já configurado"
 fi
@@ -102,7 +102,7 @@ echo '=== SERVIDOR DO TÚNEL ==='
 echo 'Comando: ./traffic_tunnel tun0 -s 172.31.66.1'
 echo 'Status: Iniciando...'
 echo ''
-cd ../../traffic_tunnel
+cd traffic_tunnel
 echo 'Executando: sudo ./traffic_tunnel tun0 -s 172.31.66.1'
 echo ''
 sudo ./traffic_tunnel tun0 -s 172.31.66.1
@@ -127,7 +127,7 @@ echo '=== CONFIGURAÇÃO DO SERVIDOR ==='
 echo 'Comando: ./server.sh'
 echo 'Status: Configurando...'
 echo ''
-cd ../../traffic_tunnel
+cd traffic_tunnel
 echo 'Executando: sudo ./server.sh'
 echo ''
 sudo ./server.sh
@@ -173,7 +173,7 @@ echo '=== CLIENTE DO TÚNEL ==='
 echo 'Comando: ./client1.sh'
 echo 'Status: Conectando...'
 echo ''
-cd ../../traffic_tunnel
+cd traffic_tunnel
 echo 'Executando: sudo ./client1.sh'
 echo ''
 sudo ./client1.sh
@@ -217,12 +217,12 @@ echo '  curl --interface tun0 http://example.com'
 echo '  dig @8.8.8.8 google.com'
 echo ''
 echo 'Para ver logs em tempo real:'
-echo '  tail -f ../../assets/logs/camada3.csv'
-echo '  tail -f ../../assets/logs/camada4.csv'
+echo '  tail -f assets/logs/camada3.csv'
+echo '  tail -f assets/logs/camada4.csv'
 echo ''
 echo 'Executando monitor...'
 echo ''
-cd ../../monitor
+cd monitor
 sudo python3 monitor.py tun0
 echo ''
 echo 'Monitor encerrado.'
