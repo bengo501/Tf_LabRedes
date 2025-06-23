@@ -1,0 +1,84 @@
+GUIA PARA RESOLVER PROBLEMAS COM A INTERFACE TUN0
+PROBLEMA: O monitor não está usando a interface tun0 conforme pedido no enunciado.
+
+CAUSA: A interface tun0 só existe quando o túnel está ativo.
+
+SOLUÇÕES RÁPIDAS:
+
+1. SOLUÇÃO AUTOMÁTICA (RECOMENDADO):
+   sudo ./scripts/setups/resolver_tun0.sh
+
+2. TESTE ESPECÍFICO DA TUN0:
+   sudo ./scripts/testes/teste_tun0.sh
+
+3. DEMO COMPLETA:
+   sudo ./scripts/demos/demo_live_tun0.sh
+
+EXECUÇÃO MANUAL:
+Terminal 1 - Servidor:
+cd traffic_tunnel
+sudo ./traffic_tunnel tun0 -s 172.31.66.1
+
+Terminal 2 - Configurar:
+cd traffic_tunnel
+sudo ./server.sh
+
+Terminal 3 - Cliente:
+cd traffic_tunnel
+sudo ./client1.sh
+
+Terminal 4 - Monitor:
+cd monitor
+sudo python3 monitor.py tun0
+
+VERIFICAÇÃO:
+Para verificar se a tun0 está ativa:
+ip addr show tun0
+
+Deve mostrar:
+tun0: <POINTOPOINT,MULTICAST,NOARP,UP,LOWER_UP>
+inet 172.31.66.1/24 scope global tun0
+
+COMANDOS ÚTEIS:
+Parar todos os processos:
+sudo pkill -f 'traffic_tunnel' && sudo pkill -f 'python3 monitor.py'
+
+Ver logs em tempo real:
+tail -f assets/logs/camada3.csv
+tail -f assets/logs/camada4.csv
+
+Gerar tráfego de teste:
+ping 172.31.66.1
+curl --interface tun0 http://example.com
+
+DIFERENÇAS IMPORTANTES:
+Interface Física (wlp0s20f3):
+- Tem cabeçalhos de Camada 2 (MAC)
+- Log camada2.csv será preenchido
+- NÃO é o cenário do enunciado
+
+Interface TUN0:
+- É o cenário oficial do trabalho
+- Captura tráfego do túnel VPN
+- Log camada2.csv ficará vazio (correto)
+- Logs camada3.csv e camada4.csv funcionam
+
+PARA APRESENTAÇÃO:
+1. Execute: sudo ./scripts/setups/resolver_tun0.sh
+2. Ou use: sudo ./scripts/testes/teste_tun0.sh
+3. Ou demonstre: sudo ./scripts/demos/demo_live_tun0.sh
+
+PROBLEMAS COMUNS:
+Erro "Device or resource busy":
+- Execute: sudo ./scripts/setups/setup_tun.sh
+- Reinicie o terminal
+- Execute: sudo ./scripts/setups/resolver_tun0.sh
+
+Tun0 não aparece:
+- Verifique: lsmod | grep tun
+- Verifique: ls -la /dev/tun
+- Execute: sudo ./scripts/setups/setup_tun.sh
+
+Túnel não conecta:
+- Verifique firewall
+- Execute: sudo ./scripts/setups/resolver_tun0.sh 

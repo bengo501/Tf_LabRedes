@@ -1,0 +1,219 @@
+GUIA DOS SCRIPTS - MONITOR DE TRÁFEGO DE REDE
+==============================================
+
+Este projeto tem vários scripts para facilitar o uso do monitor de tráfego, especialmente para a interface tun0 conforme pedido no enunciado.
+
+SCRIPTS PRINCIPAIS:
+===================
+
+1. TESTE_RAPIDO.SH - SCRIPT PRINCIPAL
+   sudo ./scripts/testes/teste_rapido.sh
+   
+   É o script mais completo. Abre um menu com todas as opções:
+   - Opção 1: Teste completo com 4 terminais
+   - Opção 2: Teste manual passo a passo
+   - Opção 3: Teste apenas do monitor
+   - Opção 4: Teste da interface tun0
+   - Opção 5: Demonstrar camada 2
+   - Opção 6: Sair
+   
+   Use este script para qualquer teste do projeto.
+
+2. DEMO_TERMINAL_MULTIPLO.SH - DEMONSTRAÇÃO VISUAL
+   sudo ./scripts/demos/demo_terminal_multiplo.sh
+   
+   Abre 4 terminais separados automaticamente:
+   - Terminal 1: Servidor do túnel
+   - Terminal 2: Configuração do servidor
+   - Terminal 3: Cliente do túnel
+   - Terminal 4: Monitor de tráfego
+   
+   Perfeito para demonstrações e apresentações.
+
+3. DEMO_LIVE_TUN0.SH - DEMONSTRAÇÃO TUN0
+   sudo ./scripts/demos/demo_live_tun0.sh
+   
+   Demonstração específica para a interface tun0.
+   Abre terminais separados para servidor, cliente e monitor.
+
+SCRIPTS DE CONFIGURAÇÃO:
+=======================
+
+4. SETUP_TUN.SH - CONFIGURAÇÃO INICIAL
+   sudo ./scripts/setups/setup_tun.sh
+   
+   Configura o dispositivo TUN automaticamente:
+   - Carrega módulo tun
+   - Cria dispositivo /dev/net/tun
+   - Configura permissões
+   
+   Use na primeira vez ou quando houver problemas.
+
+5. RESOLVER_TUN0.SH - RESOLUÇÃO COMPLETA
+   sudo ./scripts/setups/resolver_tun0.sh
+   
+   Resolve todos os problemas da tun0 automaticamente:
+   - Configura dispositivo TUN
+   - Limpa processos antigos
+   - Estabelece túnel cliente-servidor
+   - Executa monitor na tun0
+   - Gera tráfego de teste
+   
+   Use quando houver problemas ou quiser solução completa.
+
+SCRIPTS DE TESTE:
+=================
+
+6. TESTE_TUN0.SH - TESTE ESPECÍFICO
+   sudo ./scripts/testes/teste_tun0.sh
+   
+   Testa especificamente a interface tun0:
+   - Verifica se tun0 existe
+   - Inicia servidor do túnel
+   - Conecta cliente
+   - Verifica se tun0 foi criada
+   - Testa conectividade
+   
+   Use para testar se a tun0 está funcionando.
+
+7. GERAR_TRAFEGO_TESTE.SH - GERAÇÃO DE TRÁFEGO
+   ./scripts/gerador_trafego/gerar_trafego_teste.sh
+   
+   Gera diferentes tipos de tráfego:
+   - ICMP: Ping para diferentes destinos
+   - TCP: Conexões HTTP e HTTPS
+   - UDP: Consultas DNS
+   - Tráfego local: Entre cliente e servidor
+   
+   Use para testar a capacidade do monitor.
+
+SCRIPTS DO TÚNEL:
+=================
+
+8. SERVER.SH - CONFIGURAÇÃO DO SERVIDOR
+   cd traffic_tunnel
+   sudo ./server.sh
+   
+   Configura a interface tun0 no servidor:
+   - IP 172.31.66.1/24
+   - Habilita roteamento
+   - Configura iptables
+   - Ativa forwarding
+   
+   Chamado automaticamente pelos scripts principais.
+
+9. CLIENT1.SH - CONFIGURAÇÃO DO CLIENTE
+   cd traffic_tunnel
+   sudo ./client1.sh
+   
+   Configura a interface tun0 no cliente:
+   - IP 172.31.66.101/24
+   - Adiciona rota para servidor
+   - Configura gateway
+   
+   Chamado automaticamente pelos scripts principais.
+
+10. MAKEFILE - COMPILAÇÃO
+    cd traffic_tunnel
+    make
+    
+    Compila o código C do túnel:
+    - Gera executável traffic_tunnel
+    - Use make clean para limpar
+    - Use na primeira vez ou após modificações
+
+COMO USAR OS SCRIPTS:
+=====================
+
+PRIMEIRA VEZ (RECOMENDADO):
+sudo ./scripts/setups/setup_tun.sh
+sudo ./scripts/testes/teste_rapido.sh
+(Escolher Opção 1)
+
+DEMONSTRAÇÃO VISUAL:
+sudo ./scripts/demos/demo_terminal_multiplo.sh
+
+RESOLUÇÃO DE PROBLEMAS:
+sudo ./scripts/setups/resolver_tun0.sh
+
+TESTE ESPECÍFICO:
+sudo ./scripts/testes/teste_tun0.sh
+
+GERAÇÃO DE TRÁFEGO:
+./scripts/gerador_trafego/gerar_trafego_teste.sh
+
+COMANDOS MANUAIS:
+=================
+
+SERVIDOR:
+cd traffic_tunnel
+sudo ./traffic_tunnel tun0 -s 172.31.66.1
+
+CONFIGURAÇÃO:
+cd traffic_tunnel
+sudo ./server.sh
+
+CLIENTE:
+cd traffic_tunnel
+sudo ./client1.sh
+
+MONITOR:
+cd monitor
+sudo python3 monitor.py tun0
+
+GERAÇÃO DE TRÁFEGO:
+ping 172.31.66.1
+curl --interface tun0 http://example.com
+dig @8.8.8.8 google.com
+
+LOGS E RESULTADOS:
+==================
+
+ARQUIVOS GERADOS:
+- assets/logs/camada2.csv (Camada 2 - Ethernet)
+- assets/logs/camada3.csv (Camada 3 - IP)
+- assets/logs/camada4.csv (Camada 4 - Transporte)
+
+VER EM TEMPO REAL:
+tail -f assets/logs/camada3.csv
+tail -f assets/logs/camada4.csv
+
+OBSERVAÇÕES IMPORTANTES:
+========================
+
+INTERFACE TUN0:
+- É uma interface Layer 3 (IP)
+- Não possui headers Ethernet
+- O arquivo camada2.csv ficará vazio (normal)
+- Foque nos logs de Camada 3 e 4
+
+PRIVILÉGIOS:
+- Todos os scripts precisam de sudo
+- Requer privilégios de root
+
+DEPENDÊNCIAS:
+- Python 3
+- Módulo tun do kernel
+- gnome-terminal (para demonstrações)
+
+SCRIPTS ESSENCIAIS:
+===================
+
+SEMPRE USAR:
+- teste_rapido.sh (menu principal)
+- setup_tun.sh (configuração inicial)
+- demo_terminal_multiplo.sh (demonstração)
+
+USAR QUANDO NECESSÁRIO:
+- resolver_tun0.sh (problemas)
+- teste_tun0.sh (teste específico)
+- gerar_trafego_teste.sh (gerar tráfego)
+- demo_live_tun0.sh (demonstração tun0)
+
+DICA FINAL:
+===========
+
+Para começar rapidamente:
+sudo ./scripts/testes/teste_rapido.sh
+
+Este é o script mais completo e flexível, com todas as opções em um menu interativo! 

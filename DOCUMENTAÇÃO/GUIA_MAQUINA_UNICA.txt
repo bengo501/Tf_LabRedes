@@ -1,0 +1,96 @@
+GUIA DE TESTE - MÁQUINA ÚNICA (MÚLTIPLOS TERMINAIS)
+OBJETIVO: Testar toda a arquitetura em uma única máquina usando 4 terminais.
+
+PRÉ-REQUISITOS:
+- Linux com Python 3
+- Sudo (privilégios de root)
+- 4 terminais abertos
+
+PASSO A PASSO:
+PASSO 1: PREPARAÇÃO
+Abra 4 terminais e navegue para o projeto em todos:
+cd /home/bernardo/Downloads/Tf_LabRedes-BernardoKleinHeitz
+
+PASSO 2: TERMINAL 1 - SERVIDOR PROXY
+cd traffic_tunnel
+make
+sudo ./traffic_tunnel wlp0s20f3 -s 192.168.0.15
+(Substitua wlp0s20f3 e 192.168.0.15 pelos seus valores)
+DEIXE ESTE TERMINAL ABERTO
+
+PASSO 3: TERMINAL 2 - VERIFICAR INTERFACE
+ip addr show tun0
+Deve mostrar: tun0 com IP 172.31.66.1
+
+PASSO 4: TERMINAL 2 - MONITOR DE TRÁFEGO
+cd monitor
+sudo python3 monitor.py tun0
+DEIXE ESTE TERMINAL ABERTO
+
+PASSO 5: TERMINAL 3 - CLIENTE TÚNEL
+cd traffic_tunnel
+sudo ./traffic_tunnel wlp0s20f3 -c 192.168.0.16 -t
+(Use IP diferente do servidor)
+DEIXE ESTE TERMINAL ABERTO
+
+PASSO 6: TERMINAL 4 - GERAR TRÁFEGO
+ping -c 5 8.8.8.8
+curl http://example.com
+nslookup google.com
+
+PASSO 7: TERMINAL 4 - VER LOGS
+tail -f assets/logs/camada3.csv
+tail -f assets/logs/camada4.csv
+cat assets/logs/camada3.csv
+cat assets/logs/camada4.csv
+cat assets/logs/camada2.csv (deve estar vazio)
+
+RESULTADOS ESPERADOS:
+TERMINAL 2 (MONITOR):
+=== MONITOR DE TRÁFEGO DE REDE EM TEMPO REAL ===
+Contadores de Pacotes por Protocolo:
+----------------------------------------
+IPv4    :    25
+IPv6    :      0
+ARP     :      0
+TCP     :    18
+UDP     :     5
+ICMP    :     2
+Outros  :      0
+
+LOGS ESPERADOS:
+- camada3.csv: Pacotes IPv4 com IPs 172.31.66.101 → 8.8.8.8
+- camada4.csv: Conexões TCP (porta 80/443), ICMP (ping), UDP (DNS)
+- camada2.csv: Apenas cabeçalho (vazio, correto para tun0)
+
+COMANDOS ÚTEIS:
+Verificar interfaces:
+ip addr show | grep -A 5 tun
+
+Verificar roteamento:
+ip route show
+
+Verificar processos:
+ps aux | grep traffic_tunnel
+ps aux | grep monitor
+
+Limpar e reiniciar:
+sudo pkill traffic_tunnel
+sudo pkill -f monitor.py
+rm -f assets/logs/camada*.csv
+
+PROBLEMAS E SOLUÇÕES:
+1. "Interface tun0 não encontrada":
+   - Certifique-se que Terminal 1 está rodando
+
+2. "Permission denied":
+   - Use sudo em todos os comandos
+
+3. "Nenhum tráfego capturado":
+   - Verifique se Terminal 3 está rodando
+   - Gere tráfego no Terminal 4
+   - Verifique se interfaces tun estão ativas
+
+4. "Erro de rede":
+   - Use interface física diferente
+   - Verifique conectividade de rede

@@ -3,8 +3,9 @@ import socket
 
 def parse_ethernet(pkt):
     """
-    Faz o parsing do cabeçalho Ethernet (camada 2).
-    Retorna um dicionário com MAC de origem, destino, EtherType e tamanho do quadro.
+    faz o parsing do cabeçalho Ethernet (camada 2).
+    e retorna um dicionário com MAC de origem, destino, 
+    etherType e tamanho do quadro.
     """
     if len(pkt) < 14:
         return None
@@ -18,8 +19,9 @@ def parse_ethernet(pkt):
 
 def parse_ip(pkt):
     """
-    Faz o parsing do cabeçalho IP (camada 3).
-    Retorna um dicionário com versão, IHL, IP de origem, destino, protocolo e tamanho.
+    faz o parsing do cabeçalho IP (camada 3).
+    e retorna um dicionário com versão, IHL, IP de origem, 
+    destino, protocolo e tamanho.
     """
     if len(pkt) < 20:
         return None
@@ -41,8 +43,8 @@ def parse_ip(pkt):
 
 def parse_transport(pkt, proto):
     """
-    Faz o parsing do cabeçalho de transporte (camada 4) para TCP, UDP e ICMP.
-    Retorna um dicionário com portas e tamanho, se aplicável.
+    faz o parsing do cabeçalho de transporte (camada 4) para TCP, UDP e ICMP.
+    e retorna um dicionário com portas e tamanho, se aplicável.
     """
     if proto == 6 and len(pkt) >= 20:  # TCP
         src_port, dst_port = struct.unpack('!HH', pkt[:4])

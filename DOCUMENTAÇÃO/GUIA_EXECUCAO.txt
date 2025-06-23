@@ -1,0 +1,78 @@
+GUIA DE EXECUÇÃO - MONITOR DE TRÁFEGO DE REDE
+
+OBJETIVO: Executar o monitor na interface tun0.
+
+PASSO A PASSO:
+1. COMPILAR O TÚNEL:
+   cd traffic_tunnel
+   make
+
+2. EXECUTAR SERVIDOR (Terminal 1):
+   cd traffic_tunnel
+   sudo ./traffic_tunnel wlp0s20f3 -s 192.168.0.15
+   (Substitua wlp0s20f3 e 192.168.0.15 pelos seus valores)
+
+3. VERIFICAR TUN0:
+   ip addr show tun0
+   Deve mostrar: tun0 com IP 172.31.66.1
+
+4. EXECUTAR MONITOR (Terminal 2):
+   cd monitor
+   sudo python3 monitor.py tun0
+   
+   O monitor deve mostrar: "Tipo de interface detectado: tun"
+
+5. EXECUTAR CLIENTE (Terminal 3):
+   cd traffic_tunnel
+   sudo ./traffic_tunnel <if_cliente> -c <ip_cliente> -t
+
+6. GERAR TRÁFEGO (Terminal 3):
+   ping 8.8.8.8
+   curl http://example.com
+
+VERIFICAR RESULTADOS:
+1. MONITOR (Terminal 2):
+   - Contadores de IPv4, TCP, UDP, ICMP devem aumentar
+
+2. LOGS (Terminal 4):
+   tail -f assets/logs/camada3.csv
+   tail -f assets/logs/camada4.csv
+
+3. CAMADA 2 (deve estar vazio):
+   cat assets/logs/camada2.csv
+   Deve mostrar apenas o cabeçalho
+
+OPCIONAL - DEMONSTRAR CAMADA 2
+
+Para provar que a camada 2 funciona:
+sudo python3 monitor.py wlp0s20f3
+
+Neste caso, camada2.csv será preenchido com MAC addresses.
+
+COMANDOS ÚTEIS:
+Parar tudo:
+sudo pkill traffic_tunnel
+sudo pkill -f monitor.py
+
+Ver logs:
+tail -f assets/logs/camada3.csv
+tail -f assets/logs/camada4.csv
+
+Gerar tráfego:
+ping 172.31.66.1
+curl --interface tun0 http://example.com
+
+PROBLEMAS COMUNS:
+1. "Interface tun0 não encontrada":
+   - Certifique-se que o servidor (Terminal 1) está rodando
+
+2. "Permission denied":
+   - Use sudo em todos os comandos
+
+3. "Nenhum tráfego capturado":
+   - Verifique se o cliente está rodando
+   - Gere tráfego no Terminal 3
+
+4. "Device or resource busy":
+   - Execute: sudo ./scripts/setups/setup_tun.sh
+   - Reinicie e tente novamente
