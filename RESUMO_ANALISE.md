@@ -1,5 +1,9 @@
 # Resumo da Análise - Monitor de Tráfego de Rede
 
+> **📋 Descrição**: Documentação técnica que descreve o que foi implementado, como funciona e quais requisitos foram atendidos. Contém tabelas de conformidade, análise da arquitetura, estrutura dos logs e avaliação de pontos fortes/limitações. Serve como resumo executivo do projeto, demonstrando que 100% dos requisitos foram cumpridos.
+
+---
+
 ## 📋 Análise do Enunciado vs Implementação
 
 ### ✅ **Requisitos Atendidos (100%)**

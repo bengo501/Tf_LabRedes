@@ -1,5 +1,9 @@
 # Guia de Teste - Máquina Única (Múltiplos Terminais)
 
+> **📋 Descrição**: Manual prático para testar toda a arquitetura em uma única máquina usando múltiplos terminais. Permite simular o cenário cliente-servidor sem necessidade de múltiplas máquinas. Inclui comandos específicos para cada terminal, geração de tráfego de teste e solução de problemas. Perfeito para desenvolvimento e verificação rápida do funcionamento.
+
+---
+
 Este guia permite testar o projeto completo usando apenas uma máquina Linux com múltiplos terminais, simulando a arquitetura de túnel descrita no enunciado.
 
 ## 🎯 **Objetivo**

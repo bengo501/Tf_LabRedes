@@ -1,5 +1,9 @@
 # Guia de Execução - Monitor de Tráfego de Rede (Trabalho Final)
 
+> **📋 Descrição**: Manual de execução oficial focado na demonstração do projeto conforme o enunciado original. Explica como executar o monitor na interface obrigatória `tun0` do servidor proxy, aborda a contradição técnica da Camada 2 e fornece um checklist completo para apresentação. Ideal para demonstrar o trabalho ao professor seguindo exatamente a arquitetura especificada.
+
+---
+
 Este guia está 100% alinhado com o enunciado do trabalho final, focando na arquitetura de túnel e na interface obrigatória **`tun0`**.
 
 ## 📋 Análise do Enunciado e da Implementação

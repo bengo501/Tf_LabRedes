@@ -1,83 +1,107 @@
 #!/bin/bash
 
-# Script para demonstração ao vivo com dois terminais.
-# Um para o monitor, outro para gerar tráfego.
+# ==============================================================================
+# Script de Demonstração ao Vivo
+#
+# Funcionalidade:
+# Este script foi projetado para uma demonstração visual e em tempo real.
+# Ele abre uma nova janela de terminal para rodar o monitor e, no terminal
+# original, gera diferentes tipos de tráfego (ICMP, TCP, UDP).
+#
+# Propósito:
+# Perfeito para apresentações, pois permite que a audiência veja a causa
+# (geração de tráfego) e o efeito (contadores do monitor subindo)
+# simultaneamente em duas janelas lado a lado.
+#
+# Autor: Bernardo Klein Heitz
+# Data: 2025-06-23
+# ==============================================================================
 
 echo "--- DEMONSTRAÇÃO AO VIVO ---"
-echo "Este script abrirá uma nova janela de terminal para o monitor."
 echo ""
 
-# Verificar se está executando como root
+# --- Verificações Iniciais ---
 if [ "$EUID" -ne 0 ]; then
-    echo "❌ Erro: Este script precisa ser executado com sudo."
+    echo "Erro: Este script precisa ser executado com sudo."
     exit 1
 fi
 
-# Detectar interface de rede ativa para garantir que haja tráfego
+if ! command -v python3 &> /dev/null; then
+    echo "Erro: Python 3 não está instalado."
+    exit 1
+fi
+
+# Detecta a interface de rede padrão para garantir que o tráfego possa ser gerado.
 INTERFACE=$(ip route | grep default | awk '{print $5}' | head -1)
 if [ -z "$INTERFACE" ]; then
-    echo "❌ Erro: Não foi possível detectar a interface de rede ativa."
-    echo "   Por favor, execute o monitor manualmente: sudo python3 monitor.py <interface>"
+    echo "Erro: Não foi possível detectar a interface de rede ativa."
     exit 1
 fi
-echo "✅ O monitor será executado na interface ativa: $INTERFACE"
-echo ""
+echo "O monitor será executado na interface ativa: $INTERFACE"
 
-# Verificar se o gnome-terminal está disponível
+# Verifica a existência do 'gnome-terminal' para poder abrir uma nova janela.
 if ! command -v gnome-terminal &> /dev/null; then
-    echo "❌ 'gnome-terminal' não encontrado. Não é possível abrir um novo terminal."
-    echo "   Por favor, abra dois terminais manualmente e siga as instruções:"
-    echo "   Terminal 1: sudo python3 monitor.py $INTERFACE"
-    echo "   Terminal 2: ping 8.8.8.8"
+    echo "Erro: 'gnome-terminal' não encontrado."
+    echo "Este script de demonstração precisa do gnome-terminal para abrir"
+    echo "uma nova janela para o monitor."
     exit 1
 fi
 
-# Limpar logs antigos para uma demonstração limpa
-rm -f logs/camada*.csv
-
-echo "🚀 Abrindo um NOVO TERMINAL para o monitor de tráfego..."
-echo "   Por favor, posicione as janelas lado a lado para melhor visualização."
-echo "   Pode ser necessário digitar a senha sudo no novo terminal."
+echo ""
+read -p "Pressione Enter para iniciar a demonstração..."
 echo ""
 
-# Abrir o monitor em um novo terminal. O & o coloca em background.
+# --- Lógica da Demonstração ---
+
+# Função para garantir que o monitor seja encerrado ao final.
+cleanup() {
+    echo ""
+    echo "Encerrando o processo do monitor..."
+    # Mata o processo do monitor usando pkill para buscar pelo comando python3.
+    sudo pkill -f "python3 monitor.py"
+    echo "Demonstração finalizada."
+    exit
+}
+
+# Garante que a limpeza seja chamada se o script for interrompido.
+trap cleanup SIGINT
+
+# Executa o monitor em uma nova janela de terminal.
+echo "Abrindo um NOVO TERMINAL para o monitor de tráfego..."
 gnome-terminal -- sudo python3 monitor.py "$INTERFACE"
 
-# Dar tempo para a nova janela abrir e o monitor iniciar
-echo "⏳ Aguardando 3 segundos para o monitor inicializar..."
+# Pausa o script por 3 segundos para dar tempo ao monitor de inicializar na outra janela.
+echo "Aguardando 3 segundos para o monitor inicializar..."
 sleep 3
 echo ""
 
-# --- Início da Geração de Tráfego ---
-echo "--- GERANDO TRÁFEGO (NESTE TERMINAL) ---"
-echo "Observe a janela do monitor enquanto o tráfego é gerado."
-echo "================================================="
+# Bloco principal onde o tráfego é gerado sequencialmente.
+echo "No terminal original, vamos gerar tráfego."
+echo "Observe os contadores subindo no outro terminal."
 echo ""
+echo "Pressione Enter para começar a gerar tráfego..."
+read
 
-# Gerar tráfego ICMP (ping)
-echo "🌐 1. Gerando tráfego ICMP (ping)..."
-ping -c 4 8.8.8.8
+# Gera tráfego ICMP (ping).
+echo "1. Gerando tráfego ICMP (ping)..."
+ping -c 5 google.com
+
+# Gera tráfego TCP (HTTP).
 echo ""
+echo "2. Gerando tráfego TCP (HTTP)..."
+curl http://example.com
 
-# Gerar tráfego TCP (HTTP)
-echo "🌐 2. Gerando tráfego TCP (HTTP)..."
-curl -s http://example.com > /dev/null
-echo "   (Conexão com http://example.com estabelecida)"
+# Gera tráfego UDP (DNS).
 echo ""
+echo "3. Gerando tráfego UDP (DNS)..."
+# O comando 'dig' (ou 'nslookup') envia uma consulta DNS usando UDP.
+dig @8.8.8.8 google.com
 
-# Gerar tráfego UDP (DNS)
-echo "🌐 3. Gerando tráfego UDP (DNS)..."
-nslookup google.com > /dev/null
-echo "   (Consulta DNS para google.com realizada)"
 echo ""
-
-echo "================================================="
-echo "🎉 Demonstração de tráfego concluída."
+echo "Demonstração de tráfego concluída."
 echo ""
-echo "A janela do monitor continuará rodando para análise."
-read -p "Pressione Enter aqui para finalizar este script e fechar a janela do monitor..."
+# Pausa no final para permitir que o usuário analise a saída do monitor.
+read -p "Pressione Enter para encerrar o monitor e finalizar a demonstração..."
 
-# Encerrar o monitor que está rodando em outro processo
-sudo pkill -f "python3 monitor.py"
-
-echo "✅ Demonstração finalizada." 
+# Chama a função de limpeza para fechar o processo do monitor.
+cleanup 
